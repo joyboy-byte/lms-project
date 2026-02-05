@@ -1,18 +1,40 @@
-import React from 'react'
-import './App.css'
-import { Button } from './components/ui/button'
-import Login from './pages/Login'
-import Navbar from './components/Navbar'
+import React from "react";
+import "./App.css";
+import { Button } from "./components/ui/button";
+import Login from "./pages/Login";
+import Navbar from "./components/Navbar";
+import HeroSection from "./pages/student/HeroSection";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import MainLayout from "./layout/MainLayout";
 
-
+const appRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <>
+            <HeroSection />
+            {/* Courses */}
+          </>
+        ),
+      },
+      {
+        path:"login",
+        element:<Login />
+      }
+    ],
+  },
+]);
 
 function App() {
   return (
     <main>
-      <Navbar />
-      <Login />
+      <RouterProvider router={appRouter} />
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

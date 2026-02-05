@@ -19,6 +19,7 @@ import {
 } from "@/features/api/authApi";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
@@ -48,6 +49,8 @@ const Login = () => {
     },
   ] = useLoginUserMutation();
 
+  const navigate = useNavigate()
+
   const changeInputHandler = (e, type) => {
     const { name, value } = e.target;
     if (type === "signup") {
@@ -72,6 +75,7 @@ const Login = () => {
     }
     if(loginIsSuccess && loginData ) {
       toast.success(loginData.message || "Login successful." )
+      navigate('/');
     }
     if(loginError) {
       toast.error(loginData.data.message || "Login Failed" )
