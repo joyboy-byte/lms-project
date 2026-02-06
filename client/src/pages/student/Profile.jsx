@@ -14,17 +14,27 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import React from "react";
 import Course from "./Course";
+import { useLoadUserQuery } from "@/features/api/authApi";
 
 function Profile() {
-  const isLoading = false;
-  const enrolledCourses = [1];
+  // square bracket for mutation and curly braces for query
+  const { data, isLoading } = useLoadUserQuery();
+  // const enrolledCourses = [1];
+  if (isLoading) return <h1>Profile Loading... </h1>;
+
+  // console.log(data);
+  const { user } = data;
+
   return (
     <div className=" max-w-4xl mx-auto px-4 my-24">
       <h1 className="font-bold text-2xl text-center md:text-left ">PROFILE</h1>
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 my-5 ">
         <div className="flex flex-col items-center">
           <Avatar className="w-24 h-24 md:h-32 md:w-32 mb-4 ">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage
+              src={user.photoUrl || "https://github.com/shadcn.png"}
+              alt="@shadcn"
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
@@ -33,7 +43,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100">
               Name:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                Yash MERN Stack
+                {user.name}
               </span>
             </h1>
           </div>
@@ -41,7 +51,7 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100">
               Email:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                yash@gmail.com
+                {user.email}
               </span>
             </h1>
           </div>
@@ -49,12 +59,12 @@ function Profile() {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100">
               Role:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                INSTRUCTOR
+                {user.role.toUpperCase()}
               </span>
             </h1>
           </div>
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button size="sm" className="mt-2">
                 Edit Profile
               </Button>
@@ -100,10 +110,10 @@ function Profile() {
       <div>
         <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5 ">
-          {enrolledCourses.length === 0 ? (
+          {user.enrolledCourses.length === 0 ? (
             <h1>You haven't enrolled yet</h1>
           ) : (
-            enrolledCourses.map((course, index) => <Course key={index} />)
+            user.enrolledCourses.map((course) => <Course course={course} key={course._id} />)
           )}
         </div>
       </div>
