@@ -23,6 +23,7 @@ import {
 } from "./ui/sheet";
 
 import { Separator } from "./ui/separator";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const user = true;
@@ -54,8 +55,8 @@ function Navbar() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>My learning</DropdownMenuItem>
-                  <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+                  <DropdownMenuItem> <Link to='my-learning'>My learning</Link></DropdownMenuItem>
+                  <DropdownMenuItem> <Link to='profile' > Edit Profile </Link></DropdownMenuItem>
                   <DropdownMenuItem>Log out</DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
