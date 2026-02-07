@@ -1,3 +1,4 @@
+// UI Components from shadcn
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,19 +12,75 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+// Icon for loading spinner
 import { Loader2 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Course from "./Course";
-import { useLoadUserQuery } from "@/features/api/authApi";
+
+// RTK Query hooks
+// useLoadingQuery -> fetch user data
+// useUpdateUserMutation -> update user data
+import {
+  useLoadUserQuery,
+  useUpdateUserMutation,
+} from "@/features/api/authApi";
+import { toast } from "sonner";
 
 function Profile() {
-  // square bracket for mutation and curly braces for query
-  const { data, isLoading } = useLoadUserQuery();
-  // const enrolledCourses = [1];
-  if (isLoading) return <h1>Profile Loading... </h1>;
+  // ---------- STATE ----------
+  const [name, setName] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
 
-  // console.log(data);
-  const { user } = data;
+  // ---------- API CALLS ----------
+  // square bracket for mutation and curly braces for query
+  // Fetch logged-in user data from backend
+  const { data, isLoading, refetch } = useLoadUserQuery();
+
+  const [
+    updateUser,
+    {
+      data: updateUserData,
+      isLoading: updateUserIsLoading,
+      isError,
+      error,
+      isSuccess,
+    },
+  ] = useUpdateUserMutation();
+
+  // ----------------- Handlers Function ----------------------
+
+  const onChangeHandler = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfilePhoto(file);
+  };
+
+  const updateUserHandler = async () => {
+    //------ API INTEGRATION-------------
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("profilePhoto", profilePhoto);
+    await updateUser(formData);
+  };
+
+  // ---------- HOOKS(useEffect) ----------
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success(data.message || "Profile updated.");
+    }
+    if (isError) {
+      toast.error(error.message || "Failed to update profile!");
+    }
+  }, [error, updateUserData, isSuccess, isError]);
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  if (isLoading) return <h1>Profile Loading... </h1>;
+  const user = data && data.user;
+  // const user = data?.user;
 
   return (
     <div className=" max-w-4xl mx-auto px-4 my-24">
@@ -32,7 +89,7 @@ function Profile() {
         <div className="flex flex-col items-center">
           <Avatar className="w-24 h-24 md:h-32 md:w-32 mb-4 ">
             <AvatarImage
-              src={user.photoUrl || "https://github.com/shadcn.png"}
+              src={user?.photoUrl || "https://github.com/shadcn.png"}
               alt="@shadcn"
             />
             <AvatarFallback>CN</AvatarFallback>
@@ -82,18 +139,28 @@ function Profile() {
                   <Label>Name</Label>
                   <Input
                     type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
                     className="col-span-3"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label>Profile Photo</Label>
-                  <Input type="file" accept="image/" className="col-span-3" />
+                  <Input
+                    onChange={onChangeHandler}
+                    type="file"
+                    accept="image/"
+                    className="col-span-3"
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button disabled={isLoading}>
-                  {isLoading ? (
+                <Button
+                  disabled={updateUserIsLoading}
+                  onClick={updateUserHandler}
+                >
+                  {updateUserIsLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
                       wait
@@ -113,7 +180,9 @@ function Profile() {
           {user.enrolledCourses.length === 0 ? (
             <h1>You haven't enrolled yet</h1>
           ) : (
-            user.enrolledCourses.map((course) => <Course course={course} key={course._id} />)
+            user.enrolledCourses.map((course) => (
+              <Course course={course} key={course._id} />
+            ))
           )}
         </div>
       </div>
