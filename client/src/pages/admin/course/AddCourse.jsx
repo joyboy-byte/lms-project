@@ -26,11 +26,15 @@ const AddCourse = () => {
     useCreateCourseMutation();
 
   const navigate = useNavigate();
+
+  // ----------------- Handlers Function ----------------------
+
+  // When user selects category from dropdown
   const getSelectedCategory = (value) => {
     setCategory(value);
   };
 
-  // ----------------- Handlers Function ----------------------
+  // When user clicks Create button
   const createCourseHandler = async () => {
     await createCourse({ courseTitle, category });
   };
@@ -39,11 +43,11 @@ const AddCourse = () => {
 
   // for displaying toast
   useEffect(() => {
-    if(isSuccess) {
-      toast.success(data?.message || "Course created.")
+    if (isSuccess) {
+      toast.success(data?.message || "Course created.");
+      navigate("/admin/course");
     }
-  }, [isSuccess, error])
-  
+  }, [isSuccess, error]);
 
   return (
     <div className="flex-1 mx-10">
