@@ -48,10 +48,17 @@ export const courseApi = createApi({
       providesTags: ['Refetch_Creator_Course']
     }),
     editCourse: builder.mutation({
-      query: ({formData, courseId}) => ({
+      query: ({ formData, courseId }) => ({
         url: `/${courseId}`,
         method: "PUT",
         body: formData
+      }),
+      invalidatesTags: ['Refetch_Creator_Course']
+    }),
+    getCourseById: builder.query({
+      query: (courseId) => ({
+        url: `${courseId}`,
+        method: "GET"
       })
     })
   }),
@@ -59,4 +66,9 @@ export const courseApi = createApi({
 
 
 // Export auto-generated React hooks
-export const { useCreateCourseMutation, useGetCreatorCourseQuery, useEditCourseMutation } = courseApi;
+export const {
+  useCreateCourseMutation,
+  useGetCreatorCourseQuery,
+  useEditCourseMutation,
+  useGetCourseByIdQuery
+} = courseApi;
