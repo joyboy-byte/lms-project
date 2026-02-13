@@ -36,6 +36,13 @@ export const courseApi = createApi({
       invalidatesTags: ['Refetch_Creator_Course']
     }),
 
+    getPublishedCourse: builder.query({
+      query: () => ({
+        url: "/published-courses",
+        method: "GET",
+      }),
+    }),
+
     // ---------------- GET CREATOR COURSES (GET) ----------------
     getCreatorCourse: builder.query({  // because we are fetching
 
@@ -96,9 +103,9 @@ export const courseApi = createApi({
       })
     }),
     publishCourse: builder.mutation({
-      query:({courseId, query}) => ({
-        url:`/${courseId}?publish=${query}`,
-        method:"PATCH"
+      query: ({ courseId, query }) => ({
+        url: `/${courseId}?publish=${query}`,
+        method: "PATCH"
       }),
       invalidatesTags: ['Refetch_Creator_Course']
     })
@@ -109,6 +116,7 @@ export const courseApi = createApi({
 // Export auto-generated React hooks
 export const {
   useCreateCourseMutation,
+  useGetPublishedCourseQuery,
   useGetCreatorCourseQuery,
   useEditCourseMutation,
   useGetCourseByIdQuery,
