@@ -64,7 +64,7 @@ const LectureTab = () => {
         if (res.data.success) {
           console.log(res);
           setUploadVideoInfo({
-            videoUrl: res.data.data.url,
+            videoUrl: res.data.data.secure_url,
             publicId: res.data.data.public_id,
           });
           setBtnDisable(false);
@@ -110,13 +110,17 @@ const LectureTab = () => {
   }, [removeSuccess]);
 
   useEffect(() => {
-    if(lecture) {
-        setLectureTitle(lecture.lectureTitle);
-        setIsFree(lecture.isPreviewFree);
-        setUploadVideoInfo(lecture.videoInfo)
+    if (lecture) {
+      setLectureTitle(lecture.lectureTitle);
+      setIsFree(lecture.isPreviewFree);
+      // setUploadVideoInfo(lecture.videoInfo)
+
+      setUploadVideoInfo({    // here
+        videoUrl: lecture.videoUrl,
+        publicId: lecture.publicId,
+      });
     }
-  }, [lecture])
-  
+  }, [lecture]);
 
   return (
     <Card>
@@ -167,7 +171,11 @@ const LectureTab = () => {
           />
         </div>
         <div className="flex items-center space-x-2 my-5">
-          <Switch checked={isFree} onCheckedChange={setIsFree} id="airplane-mode" />
+          <Switch
+            checked={isFree}
+            onCheckedChange={setIsFree}
+            id="airplane-mode"
+          />
           <Label htmlFor="airplane-mode">Is this video FREE?</Label>
         </div>
 

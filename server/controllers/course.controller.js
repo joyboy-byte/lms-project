@@ -32,10 +32,10 @@ export const createCourse = async (req, res) => {
 
 export const getPublihedCourse = async (_, res) => {
     try {
-        const courses = await Course.find({isPublished:true}).populate({path:"creator", select:"name photoUrl"})
-        if(!courses) {
+        const courses = await Course.find({ isPublished: true }).populate({ path: "creator", select: "name photoUrl" })
+        if (!courses) {
             return res.status(404).json({
-                message:"Course not found"
+                message: "Course not found"
             })
         }
         return res.status(200).json({
@@ -198,17 +198,22 @@ export const editLecture = async (req, res) => {
         if (lectureTitle) lecture.lectureTitle = lectureTitle;
         if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
         if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
-        lecture.isPreviewFree = isPreviewFree;    
-        
+        lecture.isPreviewFree = isPreviewFree;
+
 
         await lecture.save();
 
         // Ensure the Course still has the lecture id if it was not already added;
         const course = await Course.findById(courseId);
-        if (course && course.lectures.includes(lecture._id)) {
+        // if (course && course.lectures.includes(lecture._id)) {
+        //     course.lectures.push(lecture._id);
+        //     await course.save();
+        // };
+
+        if (course && !course.lectures.includes(lecture._id)) {
             course.lectures.push(lecture._id);
             await course.save();
-        };
+        }
         return res.status(200).json({
             lecture,
             message: "Lecture updated successfully."
@@ -278,12 +283,12 @@ export const getLectureById = async (req, res) => {
 
 export const togglePublishCourse = async (req, res) => {
     try {
-        const {courseId} = req.params;
-        const {publish} = req.query;    // true/false
+        const { courseId } = req.params;
+        const { publish } = req.query;    // true/false
         const course = await Course.findById(courseId);
-        if(!course) {
+        if (!course) {
             return res.status(400).json({
-                message:"Course not found!"
+                message: "Course not found!"
             });
         }
 
@@ -293,7 +298,7 @@ export const togglePublishCourse = async (req, res) => {
 
         const statusMessage = course.isPublished ? "Published" : "Unpublished";
         return res.status(200).json({
-            message:`Course is ${statusMessage}`
+            message: `Course is ${statusMessage}`
         });
     } catch (error) {
         console.log(error);
