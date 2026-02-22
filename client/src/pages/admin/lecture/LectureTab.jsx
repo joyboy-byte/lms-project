@@ -115,12 +115,7 @@ const LectureTab = () => {
     if (lecture) {
       setLectureTitle(lecture.lectureTitle);
       setIsFree(lecture.isPreviewFree);
-      // setUploadVideoInfo(lecture.videoInfo)
-
-      setUploadVideoInfo({    // here
-        videoUrl: lecture.videoUrl,
-        publicId: lecture.publicId,
-      });
+      setUploadVideoInfo(lecture.videoInfo)
     }
   }, [lecture]);
 
